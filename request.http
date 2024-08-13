@@ -1,12 +1,12 @@
-GET http://localhost:3000/posts
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJKb2huIiwiZW1haWwiOiI0VmQ3dkBleGFtcGxlLmNvbSIsInBhc3N3b3JkIjoiMTIzIiwiaWF0IjoxNzIzNTE2MzI0fQ.c_5rDUskmturchcHbeyE7eEBgJbCn1uP6tb7Ksj_IwM
+GET http://localhost:3000/api/post
+x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzIzNTIyNTM0LCJleHAiOjE3MjM1MjI1NjR9.UT7w-vLpnXkNIOLYEmhdg1lhxc3-wIJCVizMuBUUjtU
 
 ###
 
-POST http://localhost:3000/login
+POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "4Vd7v@example.com",
+    "username": "hung105",
     "password": "123"
-}   
+}
