@@ -2,10 +2,14 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require('body-parser');
 const app = express();
+const cookieParser = require("cookie-parser");
+
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 const authRoutes = require("./routes/auth");
-const post = require('./routes/post')
+const post = require('./routes/post');
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/post", post);

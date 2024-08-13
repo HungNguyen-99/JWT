@@ -1,7 +1,8 @@
+### POST
 GET http://localhost:3000/api/post
-x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzIzNTIyNTM0LCJleHAiOjE3MjM1MjI1NjR9.UT7w-vLpnXkNIOLYEmhdg1lhxc3-wIJCVizMuBUUjtU
+x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzIzNTMzNzA0LCJleHAiOjE3MjM1MzM3MzR9.JF9AAheeXL496mhl0Z8eXuhUatg-G8BMo-Ihr0x11oQ
 
-###
+### Login
 
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
@@ -10,3 +11,7 @@ Content-Type: application/json
     "username": "hung105",
     "password": "123"
 }
+
+### Refresh Access Token
+POST http://localhost:3000/api/auth/token
+Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzIzNTM2MDY0LCJleHAiOjE3MjM1MzYxNTR9.ny-sp2wOq_fgk2v9TeddAkIIGTZCuzo20_aFKpP4UY4; Path=/; HttpOnly; Secure; SameSite=Strict
