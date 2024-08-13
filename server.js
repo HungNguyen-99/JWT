@@ -28,7 +28,7 @@ const users = [
 ];
 
 app.get("/posts", verifyToken, (req, res) => {
-  res.json({ posts: "posts" });
+  res.json({ posts: "posts", user: req.user });
 });
 
 app.post("/login", (req, res) => {
