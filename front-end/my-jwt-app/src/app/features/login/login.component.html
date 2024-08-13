@@ -1,0 +1,7 @@
+<p class="bg-blue">login</p>
+
+<form [formGroup]="formLogin" (submit)="login()">
+    <input type="text" formControlName="username"><br>
+    <input type="password" formControlName="password"><br>
+    <button type="submit">Login</button>
+</form>
