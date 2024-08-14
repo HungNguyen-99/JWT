@@ -17,7 +17,7 @@ const authController = {
         }
 
         const accessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 30 });
-        const refreshToken  = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: 90 });
+        const refreshToken  = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: 180 });
 
         refreshTokens.push(refreshToken);
         res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict' });
@@ -25,7 +25,7 @@ const authController = {
     },
     
     refreshToken: (req, res) => {
-        const refreshToken = req.cookies.refreshToken;
+        const refreshToken = req.cookie.refreshToken;
         console.log(refreshToken);
 
         if (!refreshToken || !refreshTokens.includes(refreshToken)) {

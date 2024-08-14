@@ -1,22 +1,45 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import {
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandlerFn,
+  HttpRequest,
+} from '@angular/common/http';
+import { inject } from '@angular/core';
+import { catchError, Observable, switchMap, throwError } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-    
-    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const accessToken = localStorage.getItem('accessToken');
+export function AuthInterceptor(
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> {
+  const authService = inject(AuthService);
+  const accessToken = localStorage.getItem('accessToken');
+  let reqWithHeader = req;
+  if (accessToken) {
+    reqWithHeader = req.clone({
+      headers: req.headers.set('x-access-token', accessToken),
+    });
+  }
+  return next(reqWithHeader).pipe(
+    catchError((error: HttpErrorResponse) => {
+      debugger;
+      if (
+        error.status === 401 &&
+        error.message === 'Failed to authenticate token'
+      ) {
+        return authService.refreshToken().pipe(
+          switchMap((data) => {
+            localStorage.setItem('accessToken', data.accessToken);
 
-        if (accessToken) {
-            req = req.clone({
-              setHeaders: {
-                'x-access-token': accessToken
-              }
+            reqWithHeader = req.clone({
+              headers: req.headers.set('x-access-token', data.accessToken),
             });
-          }
 
-        return next.handle(req);
-    }
-
+            return next(reqWithHeader);
+          })
+        );
+      }
+      return throwError(error);
+    })
+  );
 }
