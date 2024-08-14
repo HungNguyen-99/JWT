@@ -10,6 +10,8 @@ export class PostsService {
   private readonly httpClient = inject(HttpClient);
 
   getPosts() {
-    return this.httpClient.get(`${this.apiUrl}/post`);
+    return this.httpClient.get(`${this.apiUrl}/post`, {
+      withCredentials: true,
+    });
   }
 }

@@ -17,10 +17,11 @@ const authController = {
         }
 
         const accessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 5 });
-        const refreshToken  = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: 15 });
+        const refreshToken  = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: 60 });
 
         refreshTokens.push(refreshToken);
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 7 * 24 * 60 * 60 * 1000 });
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 100 * 1000 })
+        .cookie('newCookie', 'hungggg', { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 100 * 1000 });
         res.json({ accessToken });
     },
     

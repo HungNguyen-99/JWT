@@ -24,7 +24,6 @@ export function AuthInterceptor(
   }
   return next(reqWithHeader).pipe(
     catchError((error: HttpErrorResponse) => {
-      debugger
       if (
         error.status === 401 &&
         error.error.message === 'Failed to authenticate token.'
