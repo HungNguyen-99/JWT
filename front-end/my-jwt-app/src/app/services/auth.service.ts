@@ -15,7 +15,7 @@ export class AuthService {
     return this._httpClient.post(`${this.apiUrl}/auth/login`, {
       username,
       password,
-    });
+    }, {withCredentials: true});
   }
 
   refreshToken(): Observable<any> {

@@ -5,6 +5,7 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { catchError, Observable, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
@@ -14,6 +15,7 @@ export function AuthInterceptor(
 ): Observable<HttpEvent<unknown>> {
   const authService = inject(AuthService);
   const accessToken = localStorage.getItem('accessToken');
+  const router = inject(Router);
   let reqWithHeader = req;
   if (accessToken) {
     reqWithHeader = req.clone({
@@ -22,10 +24,10 @@ export function AuthInterceptor(
   }
   return next(reqWithHeader).pipe(
     catchError((error: HttpErrorResponse) => {
-      debugger;
+      debugger
       if (
         error.status === 401 &&
-        error.message === 'Failed to authenticate token'
+        error.error.message === 'Failed to authenticate token.'
       ) {
         return authService.refreshToken().pipe(
           switchMap((data) => {
@@ -39,6 +41,7 @@ export function AuthInterceptor(
           })
         );
       }
+      router.navigate(['/login']);
       return throwError(error);
     })
   );

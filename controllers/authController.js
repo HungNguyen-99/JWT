@@ -16,16 +16,16 @@ const authController = {
             return res.status(401).send('Username or password incorrect');
         }
 
-        const accessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 30 });
-        const refreshToken  = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: 180 });
+        const accessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 5 });
+        const refreshToken  = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: 15 });
 
         refreshTokens.push(refreshToken);
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict' });
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 7 * 24 * 60 * 60 * 1000 });
         res.json({ accessToken });
     },
     
     refreshToken: (req, res) => {
-        const refreshToken = req.cookie.refreshToken;
+        const refreshToken = req.cookies.refreshToken;
         console.log(refreshToken);
 
         if (!refreshToken || !refreshTokens.includes(refreshToken)) {
@@ -35,7 +35,7 @@ const authController = {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
             if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     
-            const newAccessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 30 });
+            const newAccessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 5 });
             res.json({ accessToken: newAccessToken });
         });
     },
