@@ -13,28 +13,26 @@ const authController = {
         const user = users.find(u => u.username === username);
 
         if (!user || !bcrypt.compareSync(password, user.password)) {
-            return res.status(401).send('Username or password incorrect');
+            return res.status(401).send({message: 'USERNAME_OR_PASSWORD_IS_NOT_CORRECT'});
         }
 
         const accessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 5 });
-        const refreshToken  = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: 60 });
+        const refreshToken  = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: 15 });
 
         refreshTokens.push(refreshToken);
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 100 * 1000 })
-        .cookie('newCookie', 'hungggg', { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 100 * 1000 });
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 30 * 1000 });
         res.json({ accessToken });
     },
     
     refreshToken: (req, res) => {
         const refreshToken = req.cookies.refreshToken;
-        console.log(refreshToken);
 
         if (!refreshToken || !refreshTokens.includes(refreshToken)) {
-            return res.sendStatus(403);
+            return res.status(401).send({message: 'COOKIE_IS_EXPIRED'})
         }
 
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-            if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+            if (err) return res.status(401).send({ auth: false, message: 'REFRESH_TOKEN_IS_EXPIRED' });
     
             const newAccessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 5 });
             res.json({ accessToken: newAccessToken });

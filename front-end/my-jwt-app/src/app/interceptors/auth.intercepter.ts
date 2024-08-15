@@ -24,21 +24,39 @@ export function AuthInterceptor(
   }
   return next(reqWithHeader).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (
-        error.status === 401 &&
-        error.error.message === 'Failed to authenticate token.'
-      ) {
-        return authService.refreshToken().pipe(
-          switchMap((data) => {
-            localStorage.setItem('accessToken', data.accessToken);
+      if (error.status === 401) {
+        if (error.error.message === 'NO_TOKEN_PROVIDED') {
+          setTimeout(() => {
+            window.alert('Please Login First!');
+          }, 100);
+        }
 
-            reqWithHeader = req.clone({
-              headers: req.headers.set('x-access-token', data.accessToken),
-            });
+        if (error.error.message === 'USERNAME_OR_PASSWORD_IS_NOT_CORRECT') {
+          window.alert('Username or Password is not correct!');
+        }
 
-            return next(reqWithHeader);
-          })
-        );
+        if (error.error.message === 'REFRESH_TOKEN_IS_EXPIRED') {
+          window.alert('Refesh Token is exprired!');
+        }
+
+        if (error.error.message === 'COOKIE_IS_EXPIRED') {
+          window.alert('Cookie is expired!');
+        }
+
+        if (error.error.message === 'TOKEN_INVALID') {
+          localStorage.removeItem('accessToken');
+          return authService.refreshToken().pipe(
+            switchMap((data) => {
+              localStorage.setItem('accessToken', data.accessToken);
+
+              reqWithHeader = req.clone({
+                headers: req.headers.set('x-access-token', data.accessToken),
+              });
+
+              return next(reqWithHeader);
+            })
+          );
+        }
       }
       router.navigate(['/login']);
       return throwError(error);
