@@ -13,11 +13,12 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 const authRoutes = require("./routes/auth");
-const post = require('./routes/post');
-
+const postRoutes = require('./routes/post');
+const settingRoutes = require('./routes/setting');
 
 app.use("/api/auth", authRoutes);
-app.use("/api/post", post);
+app.use("/api/post", postRoutes);
+app.use("/api/setting", settingRoutes);
 
 const PORT = process.env.PORT || 4000;
 

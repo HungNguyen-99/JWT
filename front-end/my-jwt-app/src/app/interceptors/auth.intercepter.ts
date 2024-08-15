@@ -24,7 +24,7 @@ export function AuthInterceptor(
   }
   return next(reqWithHeader).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
+      if (error.status === 401 || error.status === 403) {
         if (error.error.message === 'NO_TOKEN_PROVIDED') {
           setTimeout(() => {
             window.alert('Please Login First!');
@@ -41,6 +41,13 @@ export function AuthInterceptor(
 
         if (error.error.message === 'COOKIE_IS_EXPIRED') {
           window.alert('Cookie is expired!');
+        }
+
+        if (error.error.message === 'IS_NOT_ADMIN') {
+          setTimeout(() => {
+            window.alert('No Permission!');
+            localStorage.removeItem('accessToken');
+          }, 100);
         }
 
         if (error.error.message === 'TOKEN_INVALID') {

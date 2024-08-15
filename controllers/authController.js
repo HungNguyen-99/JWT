@@ -4,7 +4,8 @@ const bcrypt = require('bcryptjs');
 let refreshTokens = []; // Trong thực tế, nên lưu trữ trong DB
 
 const users = [
-    { id: 1, username: 'hung105', password: bcrypt.hashSync('123', 8) }
+    { id: 1, username: 'hung105', password: bcrypt.hashSync('123', 8) },
+    { id: 2, username: 'hung106', password: bcrypt.hashSync('123', 8) },
 ];
 
 const authController = {

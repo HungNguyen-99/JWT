@@ -16,4 +16,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/posts/posts.component').then((m) => m.PostsComponent),
   },
+  {
+    path: 'setting',
+    loadComponent: () =>
+      import('./features/setting/setting.component').then(
+        (m) => m.SettingComponent
+      ),
+  },
 ];
