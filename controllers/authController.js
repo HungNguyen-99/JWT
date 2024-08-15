@@ -4,8 +4,8 @@ const bcrypt = require('bcryptjs');
 let refreshTokens = []; // Trong thực tế, nên lưu trữ trong DB
 
 const users = [
-    { id: 1, username: 'hung105', password: bcrypt.hashSync('123', 8) },
-    { id: 2, username: 'hung106', password: bcrypt.hashSync('123', 8) },
+    { id: 1, username: 'hung105', password: bcrypt.hashSync('123', 8), role: 'admin' },
+    { id: 2, username: 'hung106', password: bcrypt.hashSync('123', 8), role: 'user' },
 ];
 
 const authController = {
@@ -17,11 +17,11 @@ const authController = {
             return res.status(401).send({message: 'USERNAME_OR_PASSWORD_IS_NOT_CORRECT'});
         }
 
-        const accessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 5 });
-        const refreshToken  = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: 15 });
+        const accessToken = jwt.sign({ username: user.username, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 5 });
+        const refreshToken  = jwt.sign({ username: user.username, role: user.role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: 50 });
 
         refreshTokens.push(refreshToken);
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 30 * 1000 });
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 300 * 1000 });
         res.json({ accessToken });
     },
     
@@ -35,7 +35,7 @@ const authController = {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
             if (err) return res.status(401).send({ auth: false, message: 'REFRESH_TOKEN_IS_EXPIRED' });
     
-            const newAccessToken = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 5 });
+            const newAccessToken = jwt.sign({ username: user.username, role: user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 5 });
             res.json({ accessToken: newAccessToken });
         });
     },
